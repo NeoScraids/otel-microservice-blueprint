@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  order-service:
+    build: .
+    container_name: order-processing-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVICE_NAME=order-processing-service
+      - SERVICE_VERSION=1.0.0
+      - ENVIRONMENT=production
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://alloy:4317
+      - OTEL_EXPORTER_PROTOCOL=grpc
+      - OTEL_SAMPLING_RATIO=1.0
+      - LOG_LEVEL=INFO
+    networks:
+      - observability-net
+    restart: unless-stopped
+
+networks:
+  observability-net:
+    name: observability-net
+    external: true
