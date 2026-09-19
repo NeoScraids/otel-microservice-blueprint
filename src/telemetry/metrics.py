@@ -57,9 +57,20 @@ def init_metrics():
         unit="s"
     )
 
+    # UpDownCounter: solicitudes HTTP activas en vuelo en este momento.
+    # Se incrementa al inicio de cada request y se decrementa al finalizar
+    # (en el middleware de telemetria). Util para detectar stalls y thread
+    # exhaustion antes de que se manifiesten como errores HTTP 503/504.
+    active_requests_gauge = meter.create_up_down_counter(
+        name="http_active_requests",
+        description="Numero de solicitudes HTTP actualmente en procesamiento",
+        unit="1"
+    )
+
     return {
         "meter": meter,
         "http_requests_total": http_requests_total,
         "http_request_duration_seconds": http_request_duration_seconds,
-        "db_query_duration_seconds": db_query_duration_seconds
+        "db_query_duration_seconds": db_query_duration_seconds,
+        "active_requests_gauge": active_requests_gauge,
     }
